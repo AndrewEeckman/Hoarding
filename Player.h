@@ -1,0 +1,8 @@
+//
+// Created by Andrew Eeckman on 1/31/18.
+//
+
+#ifndef HOARDINGCPP_PLAYERMANAGER_H
+#define HOARDINGCPP_PLAYERMANAGER_H
+
+#endif //HOARDINGCPP_PLAYERMANAGER_H
