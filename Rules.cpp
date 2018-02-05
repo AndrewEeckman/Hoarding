@@ -61,55 +61,41 @@ int Monopoly::Rules::getSalMultiGo() {
 
 //**********************************************************************************************************************************
 
-void Monopoly::Rules::readInRules(char *argv) {
-    ifstream rulesIn(argv);
-
-    string tempBuildEvenly;
-    string tempFreeParking;
-    string tempAuction;
-
-    if(!rulesIn.is_open()) {
-        cout << "Error opening file" << endl;
-    }
-
-    rulesIn.ignore(256, ':');
-    rulesIn >> startingCash;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> turnLimit;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> numOfPlayerToEndGame;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> propertySetMultiplier;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> numHousesBeforeHotels;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> tempBuildEvenly;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> tempFreeParking;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> tempAuction;
-    rulesIn.ignore(256, '\n');
-    rulesIn.ignore(256, ':');
-    rulesIn >> salMultiLandingOnGo;
-
-    if(tempBuildEvenly == "Yes") {
-        buildHousesEvenly = true;
-    }
-
-    if(tempFreeParking == "Yes") {
-        putMoneyInFreeParking = true;
-    }
-
-    if(tempAuction == "Yes") {
-        auctionProperties = true;
-    }
+void Monopoly::Rules::setStartingCash(int cash) {
+    startingCash = cash;
 }
+
+void Monopoly::Rules::setTurnLimit(int limit) {
+    turnLimit = limit;
+}
+
+void Monopoly::Rules::setPlayersToEndGame(int endGameNum) {
+    numOfPlayerToEndGame = endGameNum;
+}
+
+void Monopoly::Rules::setSetMulti(int setMulti) {
+    propertySetMultiplier = setMulti;
+}
+
+void Monopoly::Rules::setHousesBefore(int houses) {
+    numHousesBeforeHotels = houses;
+}
+
+void Monopoly::Rules::setBuildEvenly(bool even) {
+    buildHousesEvenly = even;
+}
+
+void Monopoly::Rules::setFreeParking(bool free) {
+    putMoneyInFreeParking = free;
+}
+
+void Monopoly::Rules::setAuction(bool auction) {
+    auctionProperties = auction;
+}
+
+void Monopoly::Rules::setSalMultiGo(int salMulti) {
+    salMultiLandingOnGo = salMulti;
+}
+
 
 //**********************************************************************************************************************************
