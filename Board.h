@@ -26,7 +26,7 @@ using std::string;
 
 namespace Monopoly {
 
-    class Board : public propertyType , public goType {
+    class Board {
     public:
 
         Board();
@@ -43,6 +43,14 @@ namespace Monopoly {
             return numOfPlayers;
         }
 
+        void setNumOfPlayersLeft(int num) {
+            numOfPlayersLeft = num;
+        }
+
+        int getNumOfPlayersLeft() {
+            return numOfPlayersLeft;
+        }
+
         std::vector<boardSpace>boardSpaces;
         std::vector<Player>players;
         Rules rules;
@@ -51,6 +59,7 @@ namespace Monopoly {
 
         int numOfSpaces;
         int numOfPlayers;
+        int numOfPlayersLeft;
     };
 }
 

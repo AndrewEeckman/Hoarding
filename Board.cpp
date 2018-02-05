@@ -146,7 +146,7 @@ void Monopoly::Board::displayBoard(Board *board) {
                     if (count >= 1) {
                         cout << ", ";
                     }
-                    cout << "[" << players.at(j).getName() << " : " << players.at(j).getCashAmount() << "] ";
+                    cout << "[" << players.at(j).getName() << " : $" << players.at(j).getCashAmount() << "] ";
                     count++;
                 }
             }
@@ -157,7 +157,9 @@ void Monopoly::Board::displayBoard(Board *board) {
             cout << (*board).boardSpaces.at(i).propertySpace.getPositionOnBoard() << "\t\t\t| " << (*board).boardSpaces.at(i).propertySpace.getName() << "\t\t\t\t| ";
 
             if((*board).boardSpaces.at(i).propertySpace.getOwned()) {
-                //FIXME: Do something here
+
+                cout << (*board).players.at((*board).boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t\t\t|";
+
             } else {
                 cout << "None\t\t| ";
             }
@@ -167,7 +169,7 @@ void Monopoly::Board::displayBoard(Board *board) {
                     if(count > 0) {
                         cout << ", ";
                     }
-                    cout << "[" << players.at(j).getName() << " : " << players.at(j).getCashAmount() << "]";
+                    cout << "[" << players.at(j).getName() << " : $" << players.at(j).getCashAmount() << "]";
                     count++;
                 }
             }
@@ -187,12 +189,13 @@ void Monopoly::Board::initiatePlayers(Board *board) {
 
     cout << "Enter how many players will be playing: ";
     cin >> numOfPlayers;
+    numOfPlayersLeft = numOfPlayers;
 
     (*board).players.assign(static_cast<unsigned long>(numOfPlayers), Player());
 
     for(int i = 0; i < numOfPlayers; i++) {
         (*board).players.at(i).setBoardPosition(0);
-        (*board).players.at(i).setNumIdentifier(i+1);
+        (*board).players.at(i).setNumIdentifier(i);
         (*board).players.at(i).setCashAmount(rules.getStartingCash());
         (*board).players.at(i).setInGame(true);
         (*board).players.at(i).setNetWorth(rules.getStartingCash());

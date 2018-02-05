@@ -1,5 +1,5 @@
-Starting Cash: 1000
-Turn Limit (-1 for no turn limit): 10
+Starting Cash: 10000
+Turn Limit (-1 for no turn limit): 2
 Number of Players Left To End Game: 1
 Property Set Multiplier: 10
 Number of Houses Before Hotels: 4

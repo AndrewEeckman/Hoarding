@@ -20,6 +20,8 @@ int main(int argc, char* argv[]) {
     Board board;
     GameState game;
     int currentPlayer = 0;
+    int playerNumber = 0;
+
     int i = 0;
 
     //readInRules(game, argv[1]);
@@ -28,14 +30,18 @@ int main(int argc, char* argv[]) {
 
     board.readInBoard(argv[2], &board);
 
+    int playersInGame = board.getPlayerNumber();
+    playerNumber = board.getPlayerNumber();
+
     board.initiatePlayers(&board);
 
-    board.displayBoard(&board);
 
-    while(true) {
+    while(!game.gameOver(&board, i / board.getPlayerNumber(), board.getNumOfPlayersLeft())) {
         game.getMove(&board, i % board.getPlayerNumber());
         i++;
     }
+
+    game.declareWinner(&board, board.getNumOfPlayersLeft());
 
     return 0;
 }
