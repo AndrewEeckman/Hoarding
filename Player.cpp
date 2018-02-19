@@ -4,9 +4,11 @@
 
 #include "Player.h"
 
+using namespace Monopoly;
+
 //**********************************************************************************************************************************
 
-Monopoly::Player::Player() {
+Player::Player() {
     name.assign(" ");
     numIdentifier = 0;
     cashAmount = 0;

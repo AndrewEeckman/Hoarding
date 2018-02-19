@@ -1,10 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
 #include "Rules.h"
 #include "Board.h"
 #include "Player.h"
 #include "GameState.h"
+#include "DiceRoller.h"
 
 //**********************************************************************************************************************************
 
@@ -16,32 +18,32 @@ using std::endl;
 //**********************************************************************************************************************************
 
 int main(int argc, char* argv[]) {
-    Rules rules;
     Board board;
     GameState game;
-    int currentPlayer = 0;
-    int playerNumber = 0;
 
-    int i = 0;
+    ifstream randomStream;
+
+    int turnCounter = 0;
 
     //readInRules(game, argv[1]);
 
     board.readInRules(argv[1]);
 
-    board.readInBoard(argv[2], &board);
+    board.readInBoard(argv[2], board);
 
-    int playersInGame = board.getPlayerNumber();
-    playerNumber = board.getPlayerNumber();
+    board.initiatePlayers(board);
 
-    board.initiatePlayers(&board);
+    randomStream.open(argv[3]);
 
 
-    while(!game.gameOver(&board, i / board.getPlayerNumber(), board.getNumOfPlayersLeft())) {
-        game.getMove(&board, i % board.getPlayerNumber());
-        i++;
+    while(!game.gameOver(board, turnCounter, board.getNumOfPlayersLeft())) {
+        game.getMove(board, turnCounter % board.getPlayerNumber(), randomStream);
+        turnCounter++;
     }
 
-    game.declareWinner(&board, board.getNumOfPlayersLeft());
+    game.declareWinner(board, board.getNumOfPlayersLeft());
+
+    randomStream.close();
 
     return 0;
 }

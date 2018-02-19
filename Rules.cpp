@@ -5,11 +5,12 @@
 //**********************************************************************************************************************************
 
 #include "Rules.h"
-#include <fstream>
+
+using namespace Monopoly;
 
 //**********************************************************************************************************************************
 
-Monopoly::Rules::Rules() {
+Rules::Rules() {
     startingCash = 0;
     turnLimit = 0;
     numOfPlayerToEndGame = 0;
@@ -23,78 +24,86 @@ Monopoly::Rules::Rules() {
 
 //**********************************************************************************************************************************
 
-int Monopoly::Rules::getStartingCash() {
+int Rules::getStartingCash() {
     return startingCash;
 }
 
-int Monopoly::Rules::getTurnLimit() {
+int Rules::getTurnLimit() {
     return turnLimit;
 }
 
-int Monopoly::Rules::getPlayersToEndGame() {
+int Rules::getPlayersToEndGame() {
     return numOfPlayerToEndGame;
 }
 
-int Monopoly::Rules::getSetMulti() {
+int Rules::getSetMulti() {
     return propertySetMultiplier;
 }
 
-int Monopoly::Rules::getHousesBefore() {
+int Rules::getHousesBefore() {
     return numHousesBeforeHotels;
 }
 
-bool Monopoly::Rules::getBuildEvenly() {
+bool Rules::getBuildEvenly() {
     return buildHousesEvenly;
 }
 
-bool Monopoly::Rules::getFreeParking() {
+bool Rules::getFreeParking() {
     return putMoneyInFreeParking;
 }
 
-bool Monopoly::Rules::getAuction() {
+bool Rules::getAuction() {
     return auctionProperties;
 }
 
-int Monopoly::Rules::getSalMultiGo() {
+int Rules::getSalMultiGo() {
     return salMultiLandingOnGo;
+}
+
+int Rules::getMaxReRolls() {
+    return maxReRolls;
 }
 
 //**********************************************************************************************************************************
 
-void Monopoly::Rules::setStartingCash(int cash) {
+void Rules::setStartingCash(int cash) {
     startingCash = cash;
 }
 
-void Monopoly::Rules::setTurnLimit(int limit) {
+void Rules::setTurnLimit(int limit) {
     turnLimit = limit;
 }
 
-void Monopoly::Rules::setPlayersToEndGame(int endGameNum) {
+void Rules::setPlayersToEndGame(int endGameNum) {
     numOfPlayerToEndGame = endGameNum;
 }
 
-void Monopoly::Rules::setSetMulti(int setMulti) {
+void Rules::setSetMulti(int setMulti) {
     propertySetMultiplier = setMulti;
 }
 
-void Monopoly::Rules::setHousesBefore(int houses) {
+void Rules::setHousesBefore(int houses) {
     numHousesBeforeHotels = houses;
 }
 
-void Monopoly::Rules::setBuildEvenly(bool even) {
+void Rules::setBuildEvenly(bool even) {
     buildHousesEvenly = even;
 }
 
-void Monopoly::Rules::setFreeParking(bool free) {
+void Rules::setFreeParking(bool free) {
     putMoneyInFreeParking = free;
 }
 
-void Monopoly::Rules::setAuction(bool auction) {
+void Rules::setAuction(bool auction) {
     auctionProperties = auction;
 }
 
-void Monopoly::Rules::setSalMultiGo(int salMulti) {
+void Rules::setSalMultiGo(int salMulti) {
     salMultiLandingOnGo = salMulti;
+}
+
+void Rules::setMaxReRolls(int numReRolls) {
+    maxReRolls = numReRolls;
 }
 
 

@@ -9,6 +9,8 @@
 
 #include "Property.h"
 #include "Player.h"
+#include "Space.h"
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -30,9 +32,9 @@ namespace Monopoly {
     public:
 
         Board();
-        void readInBoard(char argv[], Board *board);
-        void displayBoard(Board *board);
-        void initiatePlayers(Board *board);
+        void readInBoard(char argv[], Board& board);
+        void displayBoard(Board& board);
+        void initiatePlayers(Board& board);
         void readInRules(char *argv);
 
         int getSpaces() {

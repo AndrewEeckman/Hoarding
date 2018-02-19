@@ -3,17 +3,18 @@
 //
 
 #include "Board.h"
-#include "Property.h"
+
+using namespace Monopoly;
 
 //**********************************************************************************************************************************
 
-Monopoly::Board::Board() {
+Board::Board() {
     numOfSpaces = 0;
 }
 
 //**********************************************************************************************************************************
 
-void Monopoly::Board::readInBoard(char *argv, Board *board) {
+void Board::readInBoard(char *argv, Board& board) {
     ifstream readIn(argv);
 
     string tempType;
@@ -29,33 +30,33 @@ void Monopoly::Board::readInBoard(char *argv, Board *board) {
     int tempRentWHotel;
 
     char delim = ',';
-    size_t pos = 0;
     int i = 0;
 
     if(!readIn.is_open()) {
         cout << "Error opening file" << endl;
     }
 
-    readIn.ignore(256, ',');
+    readIn.ignore(256, delim);
     readIn >> numOfSpaces;
     while(i < 4) {
         readIn.ignore(256, '\n');
         i++;
     }
-    (*board).boardSpaces.assign(static_cast<unsigned long>(numOfSpaces), boardSpace());
+
+    board.boardSpaces.assign(static_cast<unsigned long>(numOfSpaces), boardSpace());
 
     getline(readIn, tempType, delim);
-    (*board).boardSpaces.at(0).goSpace.setType(tempType);
+    board.boardSpaces.at(0).goSpace.setType(tempType);
     tempType.clear();
 
     readIn >> tempMoneyAroundGo;
-    (*board).boardSpaces.at(0).goSpace.setMoneyAroundGo(tempMoneyAroundGo);
+    board.boardSpaces.at(0).goSpace.setMoneyAroundGo(tempMoneyAroundGo);
     tempMoneyAroundGo = 0;
 
     readIn.ignore(256, ',');
 
     getline(readIn, tempName, delim);
-    (*board).boardSpaces.at(0).goSpace.setName(tempName);
+    board.boardSpaces.at(0).goSpace.setName(tempName);
     tempName.clear();
 
     readIn.ignore(256, '\n');
@@ -64,82 +65,83 @@ void Monopoly::Board::readInBoard(char *argv, Board *board) {
 
     for(i = 1; i < numOfSpaces; i++) {
         getline(readIn, tempType, delim);
-        (*board).boardSpaces.at(i).propertySpace.setType(tempType);
+        board.boardSpaces.at(i).propertySpace.setType(tempType);
         tempType.clear();
 
         readIn >> tempSetID;
-        (*board).boardSpaces.at(i).propertySpace.setSetID(tempSetID);
+        board.boardSpaces.at(i).propertySpace.setSetID(tempSetID);
 
         readIn.ignore(256, ',');
 
         readIn >> tempIntraID;
-        (*board).boardSpaces.at(i).propertySpace.setIntraID(tempIntraID);
+        board.boardSpaces.at(i).propertySpace.setIntraID(tempIntraID);
 
         readIn.ignore(256, ',');
 
         getline(readIn, tempName, delim);
-        (*board).boardSpaces.at(i).propertySpace.setName(tempName);
+        board.boardSpaces.at(i).propertySpace.setName(tempName);
         tempName.clear();
 
         readIn >> tempPropCost;
-        (*board).boardSpaces.at(i).propertySpace.setPropertyCost(tempPropCost);
+        board.boardSpaces.at(i).propertySpace.setPropertyCost(tempPropCost);
 
         readIn.ignore(256, ',');
 
         readIn >> tempHouseCost;
-        (*board).boardSpaces.at(i).propertySpace.setHouseCost(tempHouseCost);
+        board.boardSpaces.at(i).propertySpace.setHouseCost(tempHouseCost);
 
         readIn.ignore(256, ',');
 
         readIn >> tempHotelCost;
-        (*board).boardSpaces.at(i).propertySpace.setHotelCost(tempHotelCost);
+        board.boardSpaces.at(i).propertySpace.setHotelCost(tempHotelCost);
 
         readIn.ignore(256, ',');
 
         readIn >> tempRent;
-        (*board).boardSpaces.at(i).propertySpace.setRent(tempRent);
+        board.boardSpaces.at(i).propertySpace.setRent(tempRent);
 
         readIn.ignore(256, ',');
 
         readIn >> tempRentWHouse;
-        (*board).boardSpaces.at(i).propertySpace.setRentHouse(tempRentWHouse);
+        board.boardSpaces.at(i).propertySpace.setRentHouse(tempRentWHouse);
 
         readIn.ignore(256, ',');
 
         readIn >> tempRentWHotel;
-        (*board).boardSpaces.at(i).propertySpace.setRentHotel(tempRentWHotel);
+        board.boardSpaces.at(i).propertySpace.setRentHotel(tempRentWHotel);
 
         readIn.ignore(256, '\n');
 
-        (*board).boardSpaces.at(i).propertySpace.setOwned(false);
-        (*board).boardSpaces.at(i).propertySpace.setOwnedBy(-1);
-        (*board).boardSpaces.at(i).propertySpace.setPositionOnBoard(i);
+        board.boardSpaces.at(i).propertySpace.setOwned(false);
+        board.boardSpaces.at(i).propertySpace.setOwnedBy(-1);
+        board.boardSpaces.at(i).propertySpace.setPositionOnBoard(i);
     }
-
+    /*
     cout << numOfSpaces << endl;
-    cout << (*board).boardSpaces.at(0).goSpace.getType() << " " << (*board).boardSpaces.at(0).goSpace.getMoneyAroundGo()
-         << " " << (*board).boardSpaces.at(0).goSpace.getName() << endl;
+    cout << board.boardSpaces.at(0).goSpace.getType() << " " << board.boardSpaces.at(0).goSpace.getMoneyAroundGo()
+         << " " << board.boardSpaces.at(0).goSpace.getName() << endl;
 
     for(i = 1; i < numOfSpaces; i++) {
-        cout << (*board).boardSpaces.at(i).propertySpace.getType() << " " << (*board).boardSpaces.at(i).propertySpace.getSetID()
-             << " " << (*board).boardSpaces.at(i).propertySpace.getIntraID() << " " << (*board).boardSpaces.at(i).propertySpace.getName() << " "
-             << (*board).boardSpaces.at(i).propertySpace.getPropertyCost() << " " << (*board).boardSpaces.at(i).propertySpace.getHouseCost() << " "
-             << (*board).boardSpaces.at(i).propertySpace.getHotelCost() << " " << (*board).boardSpaces.at(i).propertySpace.getRent() << " "
-             << (*board).boardSpaces.at(i).propertySpace.getRentHouse() << " " << (*board).boardSpaces.at(i).propertySpace.getRentHotel() << endl;
+        cout << board.boardSpaces.at(i).propertySpace.getType() << " " << board.boardSpaces.at(i).propertySpace.getSetID()
+             << " " << board.boardSpaces.at(i).propertySpace.getIntraID() << " " << board.boardSpaces.at(i).propertySpace.getName() << " "
+             << board.boardSpaces.at(i).propertySpace.getPropertyCost() << " " << board.boardSpaces.at(i).propertySpace.getHouseCost() << " "
+             << board.boardSpaces.at(i).propertySpace.getHotelCost() << " " << board.boardSpaces.at(i).propertySpace.getRent() << " "
+             << board.boardSpaces.at(i).propertySpace.getRentHouse() << " " << board.boardSpaces.at(i).propertySpace.getRentHotel() << endl;
     }
+     */
 }
 
 //**********************************************************************************************************************************
 
-void Monopoly::Board::displayBoard(Board *board) {
+void Board::displayBoard(Board& board) {
     int count = 0;
 
-    cout << "Space Number| Space Name\t| Owners\t| Players" << endl;
+    cout << "Space Number| Space Name\t| Owner\t| Players" << endl;
 
     for(int i = 0; i < numOfSpaces; i++) {
 
         if(i == 0) {
-            cout << "0\t\t\t| " << (*board).boardSpaces.at(0).goSpace.getName() << "\t\t\t| None\t\t| ";
+            cout << "0\t\t\t| " << board.boardSpaces.at(0).goSpace.getName() << "\t\t\t| None\t\t| ";
 
             for(int j = 0; j < numOfPlayers; j++){
                 if(players.at(j).getBoardPosition() == 0) {
@@ -154,18 +156,18 @@ void Monopoly::Board::displayBoard(Board *board) {
             count = 0;
 
         } else {
-            cout << (*board).boardSpaces.at(i).propertySpace.getPositionOnBoard() << "\t\t\t| " << (*board).boardSpaces.at(i).propertySpace.getName() << "\t\t\t\t| ";
+            cout << board.boardSpaces.at(i).propertySpace.getPositionOnBoard() << "\t\t\t| " << board.boardSpaces.at(i).propertySpace.getName() << "\t\t\t\t| ";
 
-            if((*board).boardSpaces.at(i).propertySpace.getOwned()) {
+            if(board.boardSpaces.at(i).propertySpace.getOwned()) {
 
-                cout << (*board).players.at((*board).boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t\t\t|";
+                cout << board.players.at(board.boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t\t\t|";
 
             } else {
                 cout << "None\t\t| ";
             }
 
             for(int j = 0; j < numOfPlayers; j++){
-                if(players.at(j).getBoardPosition() == (*board).boardSpaces.at(i).propertySpace.getPositionOnBoard()) {
+                if(players.at(j).getBoardPosition() == board.boardSpaces.at(i).propertySpace.getPositionOnBoard()) {
                     if(count > 0) {
                         cout << ", ";
                     }
@@ -183,7 +185,7 @@ void Monopoly::Board::displayBoard(Board *board) {
 
 //**********************************************************************************************************************************
 
-void Monopoly::Board::initiatePlayers(Board *board) {
+void Board::initiatePlayers(Board& board) {
 
     string tempName;
 
@@ -191,25 +193,25 @@ void Monopoly::Board::initiatePlayers(Board *board) {
     cin >> numOfPlayers;
     numOfPlayersLeft = numOfPlayers;
 
-    (*board).players.assign(static_cast<unsigned long>(numOfPlayers), Player());
+    board.players.assign(static_cast<unsigned long>(numOfPlayers), Player());
 
     for(int i = 0; i < numOfPlayers; i++) {
-        (*board).players.at(i).setBoardPosition(0);
-        (*board).players.at(i).setNumIdentifier(i);
-        (*board).players.at(i).setCashAmount(rules.getStartingCash());
-        (*board).players.at(i).setInGame(true);
-        (*board).players.at(i).setNetWorth(rules.getStartingCash());
+        board.players.at(i).setBoardPosition(0);
+        board.players.at(i).setNumIdentifier(i);
+        board.players.at(i).setCashAmount(rules.getStartingCash());
+        board.players.at(i).setInGame(true);
+        board.players.at(i).setNetWorth(0);
 
         cout << "Enter the name of player " << (i + 1) << ": ";
         cin >> tempName;
-        (*board).players.at(i).setName(tempName);
+        board.players.at(i).setName(tempName);
         tempName.clear();
     }
 }
 
 //**********************************************************************************************************************************
 
-void Monopoly::Board::readInRules(char *argv) {
+void Board::readInRules(char *argv) {
     ifstream rulesIn(argv);
 
     int tempStartingCash;
@@ -218,6 +220,8 @@ void Monopoly::Board::readInRules(char *argv) {
     int tempPropertySetMultiplier;
     int tempNumHousesBeforeHotels;
     int tempSalMultiLandingOnGo;
+
+    int tempReRolls;
 
     string tempBuildEvenly;
     string tempFreeParking;
@@ -261,15 +265,27 @@ void Monopoly::Board::readInRules(char *argv) {
 
     rulesIn >> tempBuildEvenly;
 
+    if(tempBuildEvenly == "Yes") {
+        rules.setBuildEvenly(true);
+    }
+
     rulesIn.ignore(256, '\n');
     rulesIn.ignore(256, ':');
 
     rulesIn >> tempFreeParking;
 
+    if(tempFreeParking == "Yes") {
+        rules.setFreeParking(true);
+    }
+
     rulesIn.ignore(256, '\n');
     rulesIn.ignore(256, ':');
 
     rulesIn >> tempAuction;
+
+    if(tempAuction == "Yes") {
+        rules.setAuction(true);
+    }
 
     rulesIn.ignore(256, '\n');
     rulesIn.ignore(256, ':');
@@ -277,17 +293,11 @@ void Monopoly::Board::readInRules(char *argv) {
     rulesIn >> tempSalMultiLandingOnGo;
     rules.setSalMultiGo(tempSalMultiLandingOnGo);
 
-    if(tempBuildEvenly == "Yes") {
-        rules.setBuildEvenly(true);
-    }
+    rulesIn.ignore(256, '\n');
+    rulesIn.ignore(256, ':');
 
-    if(tempFreeParking == "Yes") {
-        rules.setFreeParking(true);
-    }
-
-    if(tempAuction == "Yes") {
-        rules.setAuction(true);
-    }
+    rulesIn >> tempReRolls;
+    rules.setMaxReRolls(tempReRolls);
 }
 
 //**********************************************************************************************************************************
