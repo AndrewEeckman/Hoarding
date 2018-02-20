@@ -11,14 +11,23 @@ DiceRoller::DiceRoller() {
 }
 
 int DiceRoller::rollDice(ifstream &randomStream) {
-    int diceRoll = 0;
-    int roll1 = 0;
-    int roll2 = 0;
+    diceRoll = 0;
+    roll1 = 0;
+    roll2 = 0;
 
     randomStream >> roll1;
     randomStream >> roll2;
 
-    diceRoll = ((roll1 % 6) + 1) + ((roll2 % 6) + 1);
+    roll1 = (roll1 % 6) + 1;
+    roll2 = (roll2 % 6) + 1;
+    diceRoll = roll1 + roll2;
 
     return diceRoll;
+}
+
+int DiceRoller::getRoll1(){
+    return (roll1);
+}
+int DiceRoller::getRoll2(){
+    return (roll2);
 }

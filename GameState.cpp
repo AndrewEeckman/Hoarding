@@ -13,6 +13,8 @@ using namespace Monopoly;
 void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream) {
     int playerAction = 0;
     bool turnOver = false;
+    bool rolledDoubles = false;
+    int rerolls = -1;
 
     while (!turnOver) {
         if (!board.players.at(currentPlayer).getInGame()) {
@@ -34,8 +36,12 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
         cin >> playerAction;
 
         if (playerAction == 1) {
-            movePlayer(board, currentPlayer, randomStream);
-            turnOver = true;
+            turnOver = movePlayer(board, currentPlayer, randomStream);
+            rerolls++;
+
+            if(rerolls == board.rules.getMaxReRolls()) {
+                turnOver = true;
+            }
 
         } else if(playerAction == 2) {
             //FIXME: ADD UPGRADE FUNCTION
@@ -66,7 +72,7 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
 
 //**********************************************************************************************************************************
 
-void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStream) {
+bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStream) {
 
     int currentCashAmount = board.players.at(currentPlayer).getCashAmount();
     int currentBoardPosition = board.players.at(currentPlayer).getBoardPosition();
@@ -80,7 +86,6 @@ void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
     if(diceRoll + currentBoardPosition < board.getSpaces()) {
         board.players.at(currentPlayer).setBoardPosition(currentBoardPosition + diceRoll);
         currentBoardPosition = board.players.at(currentPlayer).getBoardPosition();
-
 
     } else if((diceRoll + currentBoardPosition) >= board.getSpaces()) { //FIXME: INACCURATELY ADDING GO VALUES
         board.players.at(currentPlayer).setBoardPosition((diceRoll + currentBoardPosition) % board.getSpaces());
@@ -133,9 +138,9 @@ void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
     board.players.at(currentPlayer).setCashAmount(currentCashAmount);
 
-
     ///---///
 
+    ///---///
 
     int rentOfPos = board.boardSpaces.at(currentBoardPosition).propertySpace.getRent();
     char choice = ' ';
@@ -192,7 +197,7 @@ void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
                     }
 
                     leaveGame(board, currentPlayer);
-                    return;
+                    return true;
 
                 } else {
                     currentCashAmount -= (rentOfPos * setMulti);
@@ -263,10 +268,14 @@ void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
                 auctionProperty(board, currentPlayer, currentBoardPosition);
             }
-
         }
 
         cout << endl;
+    }
+    if (diceRoller.getRoll1() == diceRoller.getRoll2()){
+            return false;
+    } else {
+        return true;
     }
 }
 
