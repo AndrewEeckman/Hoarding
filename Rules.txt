@@ -7,4 +7,4 @@ Must Build Houses Evenly: Yes
 Put Money In Free Parking: No
 Auction Properties: Yes
 Salary Multiplier For Landing On Go: 1
-Max Doubles ReRolls: 2
+Max Doubles ReRolls: 3

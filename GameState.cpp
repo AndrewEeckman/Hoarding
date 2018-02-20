@@ -13,6 +13,8 @@ using namespace Monopoly;
 void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream) {
     int playerAction = 0;
     bool turnOver = false;
+    bool rolledDoubles = false;
+    int rerolls = -1;
 
     while (!turnOver) {
         if (!board.players.at(currentPlayer).getInGame()) {
@@ -34,9 +36,11 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
         cin >> playerAction;
 
         if (playerAction == 1) {
-            movePlayer(board, currentPlayer, randomStream);
-            turnOver = true;
-
+                turnOver = movePlayer(board, currentPlayer, randomStream);
+                rerolls++;
+            if(rerolls == board.rules.getMaxReRolls()) {
+                turnOver = true;
+            }
         } else if(playerAction == 2) {
             //FIXME: ADD UPGRADE FUNCTION
             turnOver = false;
@@ -66,7 +70,7 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
 
 //**********************************************************************************************************************************
 
-void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStream) {
+bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStream) {
 
     int currentCashAmount = board.players.at(currentPlayer).getCashAmount();
     int currentBoardPosition = board.players.at(currentPlayer).getBoardPosition();
@@ -192,7 +196,7 @@ void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
                     }
 
                     leaveGame(board, currentPlayer);
-                    return;
+
 
                 } else {
                     currentCashAmount -= (rentOfPos * setMulti);
@@ -267,6 +271,11 @@ void GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
         }
 
         cout << endl;
+    }
+    if (diceRoller.getRoll1()==diceRoller.getRoll2()){
+            return false;
+    } else {
+        return true;
     }
 }
 
