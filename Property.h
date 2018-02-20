@@ -157,13 +157,6 @@ namespace Monopoly {
         int moneyAroundGo;
         string name;
     };
-
-    class boardSpace {
-    public:
-        boardSpace();
-        goType goSpace;
-        propertyType propertySpace;
-    };
 }
 
 //**********************************************************************************************************************************
