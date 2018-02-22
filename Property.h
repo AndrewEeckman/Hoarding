@@ -68,6 +68,13 @@ namespace Monopoly {
         void setPositionOnBoard(int pos) {
             positionOnBoard = pos;
         }
+        void setNumHouses(int numH){
+            numHouses = numH;
+        }
+        void setNumHotels(int numHot){
+            numHotels = numHot;
+        }
+
 
         string getType() {
             return type;
@@ -108,6 +115,12 @@ namespace Monopoly {
         int getPositionOnBoard() {
             return positionOnBoard;
         }
+        int getNumHouses(){
+            return numHouses;
+        }
+        int getNumHotels(){
+            return numHotels;
+        }
         //propertyType readInProperty(ifstream);
 
     private:
@@ -124,8 +137,14 @@ namespace Monopoly {
 
         bool owned;
         int ownedBy;
+        int numHouses;
+        int numHotels;
 
         int positionOnBoard;
+
+
+        int houseCount;
+        int hotelCount;
     };
 
     class goType {

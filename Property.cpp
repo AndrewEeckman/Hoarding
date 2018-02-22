@@ -17,6 +17,8 @@ propertyType::propertyType() {
     rent = 0;
     rentWithHouse = 0;
     rentWithHotel = 0;
+    numHouses = 0;
+    numHotels = 0;
 }
 
 

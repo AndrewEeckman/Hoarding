@@ -136,12 +136,12 @@ void Board::readInBoard(char *argv, Board& board) {
 void Board::displayBoard(Board& board) {
     int count = 0;
 
-    cout << "Space Number| Space Name\t| Owner\t| Players" << endl;
+    cout << "Space Number| Space Name\t| Owner\t\t| Upgrades\t| Players" << endl;
 
     for(int i = 0; i < numOfSpaces; i++) {
 
         if(i == 0) {
-            cout << "0\t\t\t| " << board.boardSpaces.at(0).goSpace.getName() << "\t\t\t| None\t\t| ";
+            cout << "0\t\t\t| " << board.boardSpaces.at(0).goSpace.getName() << "\t\t\t| None\t\t|         \t| ";
 
             for(int j = 0; j < numOfPlayers; j++){
                 if(players.at(j).getBoardPosition() == 0) {
@@ -160,11 +160,18 @@ void Board::displayBoard(Board& board) {
 
             if(board.boardSpaces.at(i).propertySpace.getOwned()) {
 
-                cout << board.players.at(board.boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t\t\t|";
+                cout << board.players.at(board.boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t|";
 
             } else {
                 cout << "None\t\t| ";
             }
+            for(int i = 0; i < board.boardSpaces.at(i).propertySpace.getNumHouses(); i ++){
+                cout << "h";
+            }
+            if (board.boardSpaces.at(i).propertySpace.getNumHotels() == 1){
+                cout << "H";
+            }
+            cout << "\t\t\t| ";
 
             for(int j = 0; j < numOfPlayers; j++){
                 if(players.at(j).getBoardPosition() == board.boardSpaces.at(i).propertySpace.getPositionOnBoard()) {
