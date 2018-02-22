@@ -8,8 +8,6 @@ using namespace Monopoly;
 
 DiceRoller::DiceRoller() {
     diceRoll = 0;
-    roll1 = 0;
-    roll2 = 0;
 }
 
 int DiceRoller::rollDice(ifstream &randomStream) {
@@ -20,8 +18,8 @@ int DiceRoller::rollDice(ifstream &randomStream) {
     randomStream >> roll1;
     randomStream >> roll2;
 
-    roll1 =  (roll1 % 6) + 1;
-    roll2 = + ((roll2 % 6) + 1);
+    roll1 = (roll1 % 6) + 1;
+    roll2 = (roll2 % 6) + 1;
     diceRoll = roll1 + roll2;
 
     return diceRoll;

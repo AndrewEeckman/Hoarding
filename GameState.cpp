@@ -36,11 +36,13 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
         cin >> playerAction;
 
         if (playerAction == 1) {
-                turnOver = movePlayer(board, currentPlayer, randomStream);
-                rerolls++;
+            turnOver = movePlayer(board, currentPlayer, randomStream);
+            rerolls++;
+
             if(rerolls == board.rules.getMaxReRolls()) {
                 turnOver = true;
             }
+
         } else if(playerAction == 2) { //Buying houses and hotels
             std::vector <int> upgradable;
             for (int i = 0; i <  board.boardSpaces.size(); i++) { //Cycles throught the properties looking for the upgradeable ones
@@ -125,7 +127,6 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
         board.players.at(currentPlayer).setBoardPosition(currentBoardPosition + diceRoll);
         currentBoardPosition = board.players.at(currentPlayer).getBoardPosition();
 
-
     } else if((diceRoll + currentBoardPosition) >= board.getSpaces()) { //FIXME: INACCURATELY ADDING GO VALUES
         board.players.at(currentPlayer).setBoardPosition((diceRoll + currentBoardPosition) % board.getSpaces());
         currentBoardPosition = board.players.at(currentPlayer).getBoardPosition();
@@ -177,9 +178,9 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
     board.players.at(currentPlayer).setCashAmount(currentCashAmount);
 
-
     ///---///
 
+    ///---///
 
     int rentOfPos = board.boardSpaces.at(currentBoardPosition).propertySpace.getRent();
     char choice = ' ';
@@ -236,7 +237,7 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
                     }
 
                     leaveGame(board, currentPlayer);
-
+                    return true;
 
                 } else {
                     currentCashAmount -= (rentOfPos * setMulti);
@@ -307,12 +308,11 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
                 auctionProperty(board, currentPlayer, currentBoardPosition);
             }
-
         }
 
         cout << endl;
     }
-    if (diceRoller.getRoll1()==diceRoller.getRoll2()){
+    if (diceRoller.getRoll1() == diceRoller.getRoll2()){
             return false;
     } else {
         return true;

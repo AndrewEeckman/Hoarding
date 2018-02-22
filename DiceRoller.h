@@ -29,7 +29,6 @@ namespace Monopoly {
         int roll1;
         int roll2;
     };
-
 }
 
 #endif //HOARDINGCPP_DICEROLLER_H
