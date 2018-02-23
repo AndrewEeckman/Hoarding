@@ -89,26 +89,28 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
 
             }
             if(upgradable.size() == 0){
-                std::cout << "You don't have any properties that you can upgrade" << endl;
+                cout << "You don't have any properties that you can upgrade" << endl;
             } else {
-                std::cout << "Which property do you want to upgrade?" << endl;
-                for (int i = 0; i < upgradable.size(); i++) {
+                cout << "Which property do you want to upgrade?" << endl;
+                for (int i = 1; i < upgradable.size(); i++) {
                     if (board.boardSpaces.at(upgradable.at(i)).propertySpace.getNumHouses() < board.rules.getHousesBefore()) {
-                        std::cout << i << ". " << board.boardSpaces.at(upgradable.at(i)).propertySpace.getName() << " [$"
+                        cout << i << ". " << board.boardSpaces.at(upgradable.at(i)).propertySpace.getName() << " [$"
                                   << board.boardSpaces.at(upgradable.at(i)).propertySpace.getHouseCost() << "]" << std::endl;
                     }
                     if (board.boardSpaces.at(upgradable.at(i)).propertySpace.getNumHouses() == board.rules.getHousesBefore()) {
-                        std::cout << i << ". " << board.boardSpaces.at(upgradable.at(i)).propertySpace.getName() << " [$"
+                        cout << i << ". " << board.boardSpaces.at(upgradable.at(i)).propertySpace.getName() << " [$"
                                   << board.boardSpaces.at(upgradable.at(i)).propertySpace.getHotelCost() << "]" << std::endl;
                     }
                 }
                 int userChoice;
-                std::cout << "Your choice: ";
+                cout << "Your choice: ";
                 std::cin >> userChoice;
                 if (board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() < board.rules.getHousesBefore()) {
+
                     board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setNumHouses(board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() + 1);
                     board.players.at(currentPlayer).setCashAmount((board.players.at(currentPlayer).getCashAmount() - board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getHouseCost()));
                     board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getRentHouse() * (int)pow(2, (board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() - 1)));
+
                 } else if (board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() == board.rules.getHousesBefore()) {
                     board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setNumHouses(0);
                     board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setNumHotels(1);
@@ -152,20 +154,20 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
 
             }
             if(degradable.size() == 0){
-                std::cout << "You have no upgrades to sell." << endl;
+                cout << "You have no upgrades to sell." << endl;
             } else {
-                std::cout << "Which property do you want to sell?" << endl;
+                cout << "Which property do you want to sell?" << endl;
                 for (int i = 0; i < degradable.size(); i++) {
                     if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHouses() > 0) {
-                        std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                        cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
                                   << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHouseCost()/2) << "]" << std::endl;
                     } else if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHotels() == 1 ){
-                        std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                        cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
                                   << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHotelCost()/2) << "]" << std::endl;
                     }
                 }
                 int userChoice;
-                std::cout << "Your choice: ";
+                cout << "Your choice: ";
                 std::cin >> userChoice;
                 if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() > 0) {
                     board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHouses(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() - 1);
@@ -350,22 +352,24 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
                         if(degradable.size() == 0){
 
                         } else {
-                            std::cout << "Which property do you want to sell?" << endl;
+                            cout << "Which property do you want to sell?" << endl;
                             for (int i = 0; i < degradable.size(); i++) {
                                 if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHouses() > 0) {
-                                    std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                                    cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
                                               << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHouseCost()/2) << "]" << std::endl;
                                 } else if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHotels() == 1 ){
-                                    std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                                    cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
                                               << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHotelCost()/2) << "]" << std::endl;
                                 }
                             }
                             int userChoice;
-                            std::cout << "Your choice: ";
+                            cout << "Your choice: ";
                             std::cin >> userChoice;
                             if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() > 0) {
                                 board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHouses(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() - 1);
                                 currentCashAmount = ((currentCashAmount + (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getHouseCost()/2)));
+                                board.players.at(currentPlayer).setCashAmount(currentCashAmount);
+                                
                                 if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() != 0) {
                                     board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(
                                             board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getRentHouse() *
@@ -461,8 +465,8 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
             if(board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() > board.players.at(currentPlayer).getCashAmount()) {
 
-                cout << board.players.at(currentPlayer).getName() << " you do not have enough money to purchase " <<
-                     board.boardSpaces.at(currentBoardPosition).propertySpace.getName() << endl;
+                cout << board.players.at(currentPlayer).getName() << ", you don't have enough money to afford " <<
+                     board.boardSpaces.at(currentBoardPosition).propertySpace.getName() << "." << endl;
 
                 cout << board.boardSpaces.at(currentBoardPosition).propertySpace.getName() << " costs $" <<
                      board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() << " but you only have $" <<
@@ -549,7 +553,7 @@ void GameState::auctionProperty(Board &board, int currentPlayer, int currentBoar
 
         if(highestBid == 0) {
             cout << "No one has bid on " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
-                 << " [$" << board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() << "] "
+                 << " [$" << board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() << "] yet"
                  << endl;
         }
 
@@ -571,7 +575,10 @@ void GameState::auctionProperty(Board &board, int currentPlayer, int currentBoar
             currentPlayer = (currentPlayer + 1) % board.getNumOfPlayersLeft();
         }
 
-        if(playersInAuction == 1) {
+        if(playersInAuction == 1 && highestBid > 0) {
+            auctionOver = true;
+            break;
+        } else if(playersInAuction == 0 && highestBid == 0) {
             auctionOver = true;
             break;
         }
@@ -583,10 +590,17 @@ void GameState::auctionProperty(Board &board, int currentPlayer, int currentBoar
         }
     }
 
-    cout << board.players.at(highestBidder).getName() << " won " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
-         << " for $" << highestBid << endl;
 
-    purchaseProperty(board, highestBidder, currentBoardPosition, highestBid);
+    if(highestBid > 0) {
+        cout << board.players.at(highestBidder).getName() << " won "
+             << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
+             << " for $" << highestBid << endl;
+
+        purchaseProperty(board, highestBidder, currentBoardPosition, highestBid);
+    } else {
+        cout << "No one decided to purchase " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
+             << endl;
+    }
 }
 
 void GameState::leaveGame(Board& board, int currentPlayer) {
