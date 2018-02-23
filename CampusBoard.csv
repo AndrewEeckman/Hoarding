@@ -4,9 +4,9 @@ Number of Spaces,8,,,,,,,,
 Type,Set Id,Intraset Id,Name,Property Cost,House Cost,Hotel Cost,Rent,Rent with House,Rent With Hotel
 Go,100,Go,,,,,,,
 Property,0,0,A,100,50,50,20,50,2000
-Property,0,1,B,150,50,50,25,75,2500
-Property,1,0,C,200,200,200,30,100,3000
-Property,1,1,D,250,200,200,35,150,3000
-Property,2,0,E,300,200,200,40,200,3500
-Property,2,1,F,350,400,400,45,300,4000
-Property,3,0,F,1000,400,400,75,300,4000
+Property,1,0,B,150,50,50,25,75,2500
+Property,2,0,C,200,200,200,30,100,3000
+Property,3,0,D,250,200,200,35,150,3000
+Property,4,0,E,300,200,200,40,200,3500
+Property,5,0,F,350,400,400,45,300,4000
+Property,6,0,F,1000,400,400,75,300,4000

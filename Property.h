@@ -50,6 +50,9 @@ namespace Monopoly {
         void setHotelCost(int htCost) {
             hotelCost = htCost;
         }
+        void setStartRent(int sR) {
+            startRent = sR;
+        }
         void setRent(int r) {
             rent = r;
         }
@@ -97,6 +100,9 @@ namespace Monopoly {
         int getHotelCost() {
             return hotelCost;
         }
+        int getStartRent() {
+            return startRent;
+        }
         int getRent() {
             return rent;
         }
@@ -131,6 +137,7 @@ namespace Monopoly {
         int propertyCost;
         int houseCost;
         int hotelCost;
+        int startRent;
         int rent;
         int rentWithHouse;
         int rentWithHotel;
@@ -142,9 +149,6 @@ namespace Monopoly {
 
         int positionOnBoard;
 
-
-        int houseCount;
-        int hotelCount;
     };
 
     class goType {

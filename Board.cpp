@@ -98,6 +98,7 @@ void Board::readInBoard(char *argv, Board& board) {
         readIn.ignore(256, ',');
 
         readIn >> tempRent;
+        board.boardSpaces.at(i).propertySpace.setStartRent(tempRent);
         board.boardSpaces.at(i).propertySpace.setRent(tempRent);
 
         readIn.ignore(256, ',');
@@ -160,12 +161,12 @@ void Board::displayBoard(Board& board) {
 
             if(board.boardSpaces.at(i).propertySpace.getOwned()) {
 
-                cout << board.players.at(board.boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t|";
+                cout << board.players.at(board.boardSpaces.at(i).propertySpace.getOwnedBy()).getName() << "\t| ";
 
             } else {
                 cout << "None\t\t| ";
             }
-            for(int i = 0; i < board.boardSpaces.at(i).propertySpace.getNumHouses(); i ++){
+            for(int h = 0; h < board.boardSpaces.at(i).propertySpace.getNumHouses(); h ++){
                 cout << "h";
             }
             if (board.boardSpaces.at(i).propertySpace.getNumHotels() == 1){
