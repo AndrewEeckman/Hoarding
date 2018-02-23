@@ -25,6 +25,7 @@ namespace Monopoly {
         bool gameOver(Board & board, int currentTurnNumber, int playersLeft);
         void declareWinner(Board& board, int playersLeft);
 
+        void purchaseProperty(Board &board, int currentPlayer, int currentBoardPosition, int amountToPay);
         void auctionProperty(Board &board, int currentPlayer, int currentBoardPosition);
     };
 }

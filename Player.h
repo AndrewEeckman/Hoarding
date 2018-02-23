@@ -29,6 +29,8 @@ namespace Monopoly {
 
         Player();
 
+        /***** BASE VARIABLES *****/
+
         void setName(const string &n) {
             name.assign(n);
         }
@@ -67,13 +69,27 @@ namespace Monopoly {
             return inGame;
         }
 
+        /***** SECONDARY VARIABLES *****/
+
+        void setPartOfAuction(bool inAuction) {
+            partOfAuction = inAuction;
+        }
+
+        bool getPartOfAuction() {
+            return partOfAuction;
+        }
+
     private:
+        /***** BASE VARIABLES *****/
         string name;
         int numIdentifier;
         int cashAmount;
         int netWorth;
         int boardPosition;
         bool inGame;
+
+        /***** SECONDARY VARIABLES *****/
+        bool partOfAuction;
     };
 }
 

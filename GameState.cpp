@@ -245,19 +245,7 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
             if (choice == 'Y' || choice == 'y') {
 
-                board.players.at(currentPlayer).setCashAmount(
-                        currentCashAmount - board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost()
-                );
-
-                currentCashAmount = board.players.at(currentPlayer).getCashAmount();
-
-                board.boardSpaces.at(currentBoardPosition).propertySpace.setOwned(true);
-
-                board.boardSpaces.at(currentBoardPosition).propertySpace.setOwnedBy(board.players.at(currentPlayer).getNumIdentifier());
-
-                board.players.at(currentPlayer).setNetWorth(
-                        board.players.at(currentPlayer).getNetWorth() + board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost()
-                );
+                purchaseProperty(board, currentPlayer, currentBoardPosition, board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost());
 
                 cout << board.players.at(currentPlayer).getName() << " bought "
                      << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
@@ -265,8 +253,15 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
             }
 
             else if(choice == 'N' || choice == 'n') {
+                if(board.rules.getAuction()) {
+                    auctionProperty(board, currentPlayer, currentBoardPosition);
+                }
 
-                auctionProperty(board, currentPlayer, currentBoardPosition);
+                for(int i = 0; i < board.getNumOfPlayersLeft(); i++) {
+                    if(board.players.at(i).getInGame()) {
+                        board.players.at(i).setPartOfAuction(true);
+                    }
+                }
             }
         }
 
@@ -279,10 +274,27 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
     }
 }
 
+void GameState::purchaseProperty(Board &board, int currentPlayer, int currentBoardPosition, int amountToPay) {
+
+    int currentCashAmount = board.players.at(currentPlayer).getCashAmount();
+
+    board.players.at(currentPlayer).setCashAmount(
+            currentCashAmount - amountToPay
+    );
+
+    board.boardSpaces.at(currentBoardPosition).propertySpace.setOwned(true);
+
+    board.boardSpaces.at(currentBoardPosition).propertySpace.setOwnedBy(board.players.at(currentPlayer).getNumIdentifier());
+
+    board.players.at(currentPlayer).setNetWorth(
+            board.players.at(currentPlayer).getNetWorth() + board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost()
+    );
+}
+
 void GameState::auctionProperty(Board &board, int currentPlayer, int currentBoardPosition) {
 
     int highestBid = 0; // Money Value
-
+    int playerBid = 0;
     int highestBidder = 0; // Num Identifier
 
     int playersInAuction = board.getNumOfPlayersLeft();
@@ -291,15 +303,53 @@ void GameState::auctionProperty(Board &board, int currentPlayer, int currentBoar
 
     cout << "Starting the auction for " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName() << endl;
 
-    if(highestBid != 0) {
+
+    while(!auctionOver) {
+
+        if(!board.players.at(currentPlayer).getPartOfAuction() || board.players.at(currentPlayer).getCashAmount() < highestBid) {
+            currentPlayer = (currentPlayer + 1) % board.getNumOfPlayersLeft();
+        }
+
+        if(highestBid == 0) {
+            cout << "No one has bid on " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
+                 << " [$" << board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() << "] "
+                 << endl;
+        }
 
 
+        cout << board.players.at(currentPlayer).getName() << ", enter a bid of at least $" << highestBid + 1
+             << " to bid on the property or a value less than that to leave the auction " << endl
+             << "Your bid: ";
 
-    } else {
-        cout << "No one has bid on " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
-             << " [" << board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() << "] "
-             << endl;
+        cin >> playerBid;
+
+        if(playerBid > highestBid) {
+            highestBid = playerBid;
+            highestBidder = board.players.at(currentPlayer).getNumIdentifier();
+            currentPlayer = (currentPlayer + 1) % board.getNumOfPlayersLeft();
+
+        } else {
+            board.players.at(currentPlayer).setPartOfAuction(false);
+            playersInAuction -= 1;
+            currentPlayer = (currentPlayer + 1) % board.getNumOfPlayersLeft();
+        }
+
+        if(playersInAuction == 1) {
+            auctionOver = true;
+            break;
+        }
+
+        if(highestBid > 0) {
+            cout << "The current bid for " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
+                 << " [$" << board.boardSpaces.at(currentBoardPosition).propertySpace.getPropertyCost() << "] "
+                 << "is $" << highestBid << " by " << board.players.at(highestBidder).getName() << endl;
+        }
     }
+
+    cout << board.players.at(highestBidder).getName() << " won " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
+         << " for $" << highestBid << endl;
+
+    purchaseProperty(board, highestBidder, currentBoardPosition, highestBid);
 }
 
 void GameState::leaveGame(Board& board, int currentPlayer) {

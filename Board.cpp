@@ -202,6 +202,8 @@ void Board::initiatePlayers(Board& board) {
         board.players.at(i).setInGame(true);
         board.players.at(i).setNetWorth(0);
 
+        board.players.at(i).setPartOfAuction(true);
+
         cout << "Enter the name of player " << (i + 1) << ": ";
         cin >> tempName;
         board.players.at(i).setName(tempName);
