@@ -5,6 +5,7 @@
 //**********************************************************************************************************************************
 
 #include "GameState.h"
+#include <cmath>
 
 using namespace Monopoly;
 
@@ -43,13 +44,147 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
                 turnOver = true;
             }
 
-        } else if(playerAction == 2) {
-            //FIXME: ADD UPGRADE FUNCTION
+        } else if(playerAction == 2) { //Buying houses and hotels
+            std::vector <int> upgradable;
+            bool canUpgrade = true;
+            for (int i = 0; i <  board.boardSpaces.size(); i++) { //Cycles throught the properties looking for the upgradeable ones
+                canUpgrade = true; //reset the value before execution of loop
+                    if (board.boardSpaces.at(i).propertySpace.getNumHotels() == 1) {
+                        canUpgrade = false;
+                        continue;
+                    }
+                if(board.boardSpaces.at(i).propertySpace.getNumHouses() < board.rules.getHousesBefore()){
+                    if (board.boardSpaces.at(i).propertySpace.getHouseCost() >= board.players.at(currentPlayer).getCashAmount()) {
+                        canUpgrade = false;
+                        continue;  //Checks for enough cash
+                    }
+                } else if ( board.boardSpaces.at(i).propertySpace.getNumHouses() == board.rules.getHousesBefore()) {
+                    if (board.boardSpaces.at(i).propertySpace.getHotelCost() >= board.players.at(currentPlayer).getCashAmount()) {
+                        canUpgrade = false;
+                        continue;  //Checks for enough cash
+                    }
+                }
+                if (board.boardSpaces.at(i).propertySpace.getOwnedBy() == currentPlayer) {
+                    for(int j = 0; j < board.boardSpaces.size(); j++){
+                        if(board.boardSpaces.at(i).propertySpace.getSetID() == board.boardSpaces.at(j).propertySpace.getSetID()){
+                            if(board.boardSpaces.at(i).propertySpace.getOwnedBy() != board.boardSpaces.at(j).propertySpace.getOwnedBy()) {
+                                canUpgrade = false;
+                                break; //checks for owning all properties
+                            }
+                            if(board.rules.getBuildEvenly()) {
+                                if(board.boardSpaces.at(j).propertySpace.getNumHotels() == 1) {
+                                    //Just to make sure that it can catch if a propety has a hotel and no houses
+                                } else if (board.boardSpaces.at(i).propertySpace.getNumHouses() > board.boardSpaces.at(j).propertySpace.getNumHouses()) {
+                                    canUpgrade = false;
+                                    break; //checks for even building
+                                }
+                            }
+                        }
+                    }
+                    if(canUpgrade) {
+                        upgradable.push_back(i);
+                    }
+
+                }
+
+            }
+            if(upgradable.size() == 0){
+                std::cout << "You don't have any properties that you can upgrade" << endl;
+            } else {
+                std::cout << "Which property do you want to upgrade?" << endl;
+                for (int i = 0; i < upgradable.size(); i++) {
+                    if (board.boardSpaces.at(upgradable.at(i)).propertySpace.getNumHouses() < board.rules.getHousesBefore()) {
+                        std::cout << i << ". " << board.boardSpaces.at(upgradable.at(i)).propertySpace.getName() << " [$"
+                                  << board.boardSpaces.at(upgradable.at(i)).propertySpace.getHouseCost() << "]" << std::endl;
+                    }
+                    if (board.boardSpaces.at(upgradable.at(i)).propertySpace.getNumHouses() == board.rules.getHousesBefore()) {
+                        std::cout << i << ". " << board.boardSpaces.at(upgradable.at(i)).propertySpace.getName() << " [$"
+                                  << board.boardSpaces.at(upgradable.at(i)).propertySpace.getHotelCost() << "]" << std::endl;
+                    }
+                }
+                int userChoice;
+                std::cout << "Your choice: ";
+                std::cin >> userChoice;
+                if (board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() < board.rules.getHousesBefore()) {
+                    board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setNumHouses(board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() + 1);
+                    board.players.at(currentPlayer).setCashAmount((board.players.at(currentPlayer).getCashAmount() - board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getHouseCost()));
+                    board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getRentHouse() * (int)pow(2, (board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() - 1)));
+                } else if (board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getNumHouses() == board.rules.getHousesBefore()) {
+                    board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setNumHouses(0);
+                    board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setNumHotels(1);
+                    board.players.at(currentPlayer).setCashAmount(board.players.at(currentPlayer).getCashAmount() - board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getHotelCost());
+                    board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(upgradable.at(userChoice)).propertySpace.getRentHotel());
+                }
+            }
+
+            //Print out the choice and get the choice and change info
+
             turnOver = false;
         }
 
         else if(playerAction == 3) {
-            //FIXME: ADD SELL FUNCTION
+            std::vector <int> degradable;
+            bool canDegrade = false;
+            for (int i = 0; i <  board.boardSpaces.size(); i++) { //Cycles throught the properties looking for the upgradeable ones
+                canDegrade = true; //reset the value before execution of loop
+                if (board.boardSpaces.at(i).propertySpace.getNumHouses() == 0 && board.boardSpaces.at(i).propertySpace.getNumHotels() != 1) {
+                    canDegrade = true;
+                    continue;
+                }
+                if (board.boardSpaces.at(i).propertySpace.getOwnedBy() == currentPlayer) {
+                    for(int j = 0; j < board.boardSpaces.size(); j++){
+                        if(board.boardSpaces.at(i).propertySpace.getSetID() == board.boardSpaces.at(j).propertySpace.getSetID()){
+                            if(board.rules.getBuildEvenly()) {
+                                if(board.boardSpaces.at(i).propertySpace.getNumHotels() == 1) {
+                                    //Just to make sure that it can catch if a propety has a hotel and no houses
+                                } else if (board.boardSpaces.at(i).propertySpace.getNumHouses() < board.boardSpaces.at(j).propertySpace.getNumHouses()) {
+                                    canDegrade = false;
+                                    break; //checks for even building
+                                }
+                            }
+                        }
+                    }
+                    if(canDegrade) {
+                        degradable.push_back(i);
+                    }
+
+                }
+
+            }
+            if(degradable.size() == 0){
+                std::cout << "You have no upgrades to sell." << endl;
+            } else {
+                std::cout << "Which property do you want to sell?" << endl;
+                for (int i = 0; i < degradable.size(); i++) {
+                    if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHouses() > 0) {
+                        std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                                  << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHouseCost()/2) << "]" << std::endl;
+                    } else if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHotels() == 1 ){
+                        std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                                  << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHotelCost()/2) << "]" << std::endl;
+                    }
+                }
+                int userChoice;
+                std::cout << "Your choice: ";
+                std::cin >> userChoice;
+                if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() > 0) {
+                    board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHouses(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() - 1);
+                    board.players.at(currentPlayer).setCashAmount((board.players.at(currentPlayer).getCashAmount() + (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getHouseCost()/2)));
+                    if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() != 0) {
+                        board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(
+                                board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getRentHouse() *
+                                (int) pow(2, (board.boardSpaces.at(
+                                        degradable.at(userChoice)).propertySpace.getNumHouses() - 1)));
+                    } else if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() == 0) {
+                        board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getStartRent());
+                    }
+                } else if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHotels() == 1) {
+                    board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHouses(4);
+                    board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHotels(0);
+                    board.players.at(currentPlayer).setCashAmount(board.players.at(currentPlayer).getCashAmount() + (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getHotelCost()/2));
+                    board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getRentHouse() * (int)pow(2, (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() - 1)));
+                }
+            }
             turnOver = false;
         }
 
@@ -175,29 +310,131 @@ bool GameState::movePlayer(Board& board, int currentPlayer, ifstream& randomStre
 
 
                 if ((currentCashAmount - (rentOfPos * setMulti)) < 0) {
+                    bool hasUpgrades = false;
+                    std::vector <int> degradable;
+                    for ( int num = 0 ; num < board.boardSpaces.size(); num++) {
+                        if ( board.boardSpaces.at(num).propertySpace.getOwnedBy() == currentPlayer) {
+                            if(board.boardSpaces.at(num).propertySpace.getNumHotels() != 0 || board.boardSpaces.at(num).propertySpace.getNumHouses() != 0 ) {
+                                hasUpgrades = true;
+                            }
+                        }
+                    }
+                    while ((currentCashAmount - (rentOfPos * setMulti)) < 0 && hasUpgrades ) {
+                        bool canDegrade = false;
+                        for (int i = 0; i <  board.boardSpaces.size(); i++) { //Cycles throught the properties looking for the upgradeable ones
+                            canDegrade = true; //reset the value before execution of loop
+                            if (board.boardSpaces.at(i).propertySpace.getNumHouses() == 0 && board.boardSpaces.at(i).propertySpace.getNumHotels() != 1) {
+                                canDegrade = true;
+                                continue;
+                            }
+                            if (board.boardSpaces.at(i).propertySpace.getOwnedBy() == currentPlayer) {
+                                for(int j = 0; j < board.boardSpaces.size(); j++){
+                                    if(board.boardSpaces.at(i).propertySpace.getSetID() == board.boardSpaces.at(j).propertySpace.getSetID()){
+                                        if(board.rules.getBuildEvenly()) {
+                                            if(board.boardSpaces.at(i).propertySpace.getNumHotels() == 1) {
+                                                //Just to make sure that it can catch if a propety has a hotel and no houses
+                                            } else if (board.boardSpaces.at(i).propertySpace.getNumHouses() < board.boardSpaces.at(j).propertySpace.getNumHouses()) {
+                                                canDegrade = false;
+                                                break; //checks for even building
+                                            }
+                                        }
+                                    }
+                                }
+                                if(canDegrade) {
+                                    degradable.push_back(i);
+                                }
 
-                    cout << board.players.at(currentPlayer).getName() << " went bankrupt to " <<
-                         board.players.at(board.boardSpaces.at(currentBoardPosition).propertySpace.getOwnedBy()).getName()
-                         << " for landing on " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
-                         << endl;
+                            }
 
-                    board.players.at(
-                            board.boardSpaces.at(currentBoardPosition).propertySpace.getOwnedBy()).setCashAmount(
-                            board.players.at(board.boardSpaces.at(
-                                    currentBoardPosition).propertySpace.getOwnedBy()).getCashAmount()
-                            + currentCashAmount
-                    );
+                        }
+                        if(degradable.size() == 0){
 
-                    for (int i = 1; i < board.getSpaces(); i++) {
-                        if (board.boardSpaces.at(i).propertySpace.getOwnedBy()
-                            == board.players.at(currentPlayer).getNumIdentifier()) {
-                            board.boardSpaces.at(i).propertySpace.setOwnedBy(board.players.at(
-                                    board.boardSpaces[currentBoardPosition].propertySpace.getOwnedBy()).getNumIdentifier());
+                        } else {
+                            std::cout << "Which property do you want to sell?" << endl;
+                            for (int i = 0; i < degradable.size(); i++) {
+                                if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHouses() > 0) {
+                                    std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                                              << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHouseCost()/2) << "]" << std::endl;
+                                } else if (board.boardSpaces.at(degradable.at(i)).propertySpace.getNumHotels() == 1 ){
+                                    std::cout << i << ". " << board.boardSpaces.at(degradable.at(i)).propertySpace.getName() << " [$"
+                                              << (board.boardSpaces.at(degradable.at(i)).propertySpace.getHotelCost()/2) << "]" << std::endl;
+                                }
+                            }
+                            int userChoice;
+                            std::cout << "Your choice: ";
+                            std::cin >> userChoice;
+                            if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() > 0) {
+                                board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHouses(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() - 1);
+                                currentCashAmount = ((currentCashAmount + (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getHouseCost()/2)));
+                                if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() != 0) {
+                                    board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(
+                                            board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getRentHouse() *
+                                            (int) pow(2, (board.boardSpaces.at(
+                                                    degradable.at(userChoice)).propertySpace.getNumHouses() - 1)));
+                                } else if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() == 0) {
+                                    board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getStartRent());
+                                }
+                            } else if (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHotels() == 1) {
+                                board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHouses(4);
+                                board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setNumHotels(0);
+                                currentCashAmount = (currentCashAmount + (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getHotelCost()/2));
+                                board.boardSpaces.at(degradable.at(userChoice)).propertySpace.setRent(board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getRentHouse() * (int)pow(2, (board.boardSpaces.at(degradable.at(userChoice)).propertySpace.getNumHouses() - 1)));
+                            }
+                        }
+                        degradable.clear();
+                        for ( int num = 0 ; num < board.boardSpaces.size(); num++) {
+                            if ( board.boardSpaces.at(num).propertySpace.getOwnedBy() == currentPlayer) {
+                                if(board.boardSpaces.at(num).propertySpace.getNumHotels() != 0 || board.boardSpaces.at(num).propertySpace.getNumHouses() != 0 ) {
+                                    hasUpgrades = true;
+                                }
+                            }
                         }
                     }
 
-                    leaveGame(board, currentPlayer);
-                    return true;
+                    if ((currentCashAmount - (rentOfPos * setMulti)) < 0) {
+
+                        cout << board.players.at(currentPlayer).getName() << " went bankrupt to " <<
+                             board.players.at(
+                                     board.boardSpaces.at(currentBoardPosition).propertySpace.getOwnedBy()).getName()
+                             << " for landing on " << board.boardSpaces.at(currentBoardPosition).propertySpace.getName()
+                             << endl;
+
+                        board.players.at(
+                                board.boardSpaces.at(currentBoardPosition).propertySpace.getOwnedBy()).setCashAmount(
+                                board.players.at(board.boardSpaces.at(
+                                        currentBoardPosition).propertySpace.getOwnedBy()).getCashAmount()
+                                + currentCashAmount
+                        );
+
+                        for (int i = 1; i < board.getSpaces(); i++) {
+                            if (board.boardSpaces.at(i).propertySpace.getOwnedBy()
+                                == board.players.at(currentPlayer).getNumIdentifier()) {
+                                board.boardSpaces.at(i).propertySpace.setOwnedBy(board.players.at(
+                                        board.boardSpaces[currentBoardPosition].propertySpace.getOwnedBy()).getNumIdentifier());
+                            }
+                        }
+
+                        leaveGame(board, currentPlayer);
+                        return true;
+                    } else {
+                        currentCashAmount -= (rentOfPos * setMulti);
+                        board.players.at(currentPlayer).setCashAmount(currentCashAmount);
+                        currentCashAmount = board.players.at(currentPlayer).getCashAmount();
+
+                        board.players.at(
+                                board.boardSpaces.at(currentBoardPosition).propertySpace.getOwnedBy()).setCashAmount(
+                                board.players.at(board.boardSpaces.at(
+                                        currentBoardPosition).propertySpace.getOwnedBy()).getCashAmount()
+                                + (rentOfPos) * setMulti
+                        );
+
+                        cout << board.players.at(currentPlayer).getName() << " paid " <<
+                             board.players.at(
+                                     board.boardSpaces.at(currentBoardPosition).propertySpace.getOwnedBy()).getName() <<
+                             " $" << (rentOfPos * setMulti) << " for landing on "
+                             << board.boardSpaces[currentBoardPosition].propertySpace.getName() <<
+                             endl;
+                    }
 
                 } else {
                     currentCashAmount -= (rentOfPos * setMulti);

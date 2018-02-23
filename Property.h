@@ -50,6 +50,9 @@ namespace Monopoly {
         void setHotelCost(int htCost) {
             hotelCost = htCost;
         }
+        void setStartRent(int sR) {
+            startRent = sR;
+        }
         void setRent(int r) {
             rent = r;
         }
@@ -68,6 +71,13 @@ namespace Monopoly {
         void setPositionOnBoard(int pos) {
             positionOnBoard = pos;
         }
+        void setNumHouses(int numH){
+            numHouses = numH;
+        }
+        void setNumHotels(int numHot){
+            numHotels = numHot;
+        }
+
 
         string getType() {
             return type;
@@ -90,6 +100,9 @@ namespace Monopoly {
         int getHotelCost() {
             return hotelCost;
         }
+        int getStartRent() {
+            return startRent;
+        }
         int getRent() {
             return rent;
         }
@@ -108,6 +121,12 @@ namespace Monopoly {
         int getPositionOnBoard() {
             return positionOnBoard;
         }
+        int getNumHouses(){
+            return numHouses;
+        }
+        int getNumHotels(){
+            return numHotels;
+        }
         //propertyType readInProperty(ifstream);
 
     private:
@@ -118,14 +137,18 @@ namespace Monopoly {
         int propertyCost;
         int houseCost;
         int hotelCost;
+        int startRent;
         int rent;
         int rentWithHouse;
         int rentWithHotel;
 
         bool owned;
         int ownedBy;
+        int numHouses;
+        int numHotels;
 
         int positionOnBoard;
+
     };
 
     class goType {
