@@ -5,6 +5,7 @@
 //**********************************************************************************************************************************
 
 #include "GameState.h"
+#include <cmath>
 
 using namespace Monopoly;
 
@@ -45,43 +46,75 @@ void GameState::getMove(Board& board, int currentPlayer, ifstream& randomStream)
 
         } else if(playerAction == 2) { //Buying houses and hotels
             std::vector <int> upgradable;
+            bool canUpgrade = true;
             for (int i = 0; i <  board.boardSpaces.size(); i++) { //Cycles throught the properties looking for the upgradeable ones
+                canUpgrade = true; //reset the value before execution of loop
                     if (board.boardSpaces.at(i).propertySpace.getNumHotels() == 1) {
+                        canUpgrade = false;
                         continue;
                     }
+                if(board.boardSpaces.at(i).propertySpace.getNumHouses() < 4){
+                    if (board.boardSpaces.at(i).propertySpace.getHouseCost() <= board.players.at(currentPlayer).getCashAmount()) {
+                        canUpgrade = false;
+                        continue;  //Checks for enough cash
+                    }
+                } else if ( board.boardSpaces.at(i).propertySpace.getNumHouses() == 4) {
+                    if (board.boardSpaces.at(i).propertySpace.getHotelCost() <= board.players.at(currentPlayer).getCashAmount()) {
+                        canUpgrade = false;
+                        continue;  //Checks for enough cash
+                    }
+                }
                 if (board.boardSpaces.at(i).propertySpace.getOwnedBy() == currentPlayer) {
                     for(int j = 0; j < board.boardSpaces.size(); j++){
                         if(board.boardSpaces.at(i).propertySpace.getSetID() == board.boardSpaces.at(j).propertySpace.getSetID()){
-                            if (board.boardSpaces.at(i).propertySpace.getNumHotels() == 1 ) {
-                                break; //checks for a hotel
-                            }
                             if(board.boardSpaces.at(i).propertySpace.getOwnedBy() != board.boardSpaces.at(j).propertySpace.getOwnedBy()) {
+                                canUpgrade = false;
                                 break; //checks for owning all properties
                             }
-                            if (board.boardSpaces.at(i).propertySpace.getNumHouses() > board.boardSpaces.at(j).propertySpace.getNumHouses()) {
-                                break; //checks for even building
-                            }
-                            if (board.boardSpaces.at(i).propertySpace.getHouseCost() <= board.players.at(currentPlayer).getCashAmount()) {
-                                break;
+                            if(board.rules.getBuildEvenly()) {
+                                if(board.boardSpaces.at(j).propertySpace.getNumHotels() == 1) {
+                                    //Just to make sure that it can catch if a propety has a hotel and no houses
+                                } else if (board.boardSpaces.at(i).propertySpace.getNumHouses() > board.boardSpaces.at(j).propertySpace.getNumHouses()) {
+                                    canUpgrade = false;
+                                    break; //checks for even building
+                                }
                             }
                         }
+                    }
+                    if(canUpgrade) {
                         upgradable.push_back(i);
-
                     }
 
                 }
 
             }
-
-            for (int i = 0; i < upgradable.size(); i++) {
-                if(board.boardSpaces.at(i).propertySpace.getNumHouses() < 4 ) {
-                    std::cout << i << ". " << board.boardSpaces.at(i).propertySpace.getName() << " [$" << board.boardSpaces.at(i).propertySpace.getHouseCost() << "]" << std::endl;
+            if(upgradable.size() == 0){
+                std::cout << "You don't have any properties that you can upgrade";
+            } else {
+                int userChoice;
+                for (int i = 0; i < upgradable.size(); i++) {
+                    if (board.boardSpaces.at(i).propertySpace.getNumHouses() < 4) {
+                        std::cout << i << ". " << board.boardSpaces.at(i).propertySpace.getName() << " [$"
+                                  << board.boardSpaces.at(i).propertySpace.getHouseCost() << "]" << std::endl;
+                    }
+                    if (board.boardSpaces.at(i).propertySpace.getNumHouses() == 4) {
+                        std::cout << i << ". " << board.boardSpaces.at(i).propertySpace.getName() << " [$"
+                                  << board.boardSpaces.at(i).propertySpace.getHotelCost() << "]" << std::endl;
+                    }
                 }
-                if(board.boardSpaces.at(i).propertySpace.getNumHouses() == 4) {
-                    std::cout << i << ". " << board.boardSpaces.at(i).propertySpace.getName() << " [$" << board.boardSpaces.at(i).propertySpace.getHotelCost() << "]" << std::endl;
+                std::cout << "Your choice: ";
+                cin >> userChoice;
+                if (board.boardSpaces.at(userChoice).propertySpace.getNumHouses() < 4) {
+                    board.boardSpaces.at(userChoice).propertySpace.setNumHouses(board.boardSpaces.at(userChoice).propertySpace.getNumHouses() + 1);
+                    board.players.at(currentPlayer).setCashAmount(board.players.at(currentPlayer).getCashAmount() - board.boardSpaces.at(userChoice).propertySpace.getHouseCost());
+                    board.boardSpaces.at(userChoice).propertySpace.setRent(board.boardSpaces.at(userChoice).propertySpace.getRentHouse() * (int)pow(2, (board.boardSpaces.at(userChoice).propertySpace.getNumHouses() - 1)));
+                } else if (board.boardSpaces.at(userChoice).propertySpace.getNumHouses() == 4) {
+                    board.boardSpaces.at(userChoice).propertySpace.setNumHouses(0);
+                    board.boardSpaces.at(userChoice).propertySpace.setNumHotels(1);
+                    board.players.at(currentPlayer).setCashAmount(board.players.at(currentPlayer).getCashAmount() - board.boardSpaces.at(userChoice).propertySpace.getHotelCost());
+                    board.boardSpaces.at(userChoice).propertySpace.setRent(board.boardSpaces.at(userChoice).propertySpace.getRentHotel());
                 }
             }
-            std
 
             //Print out the choice and get the choice and change info
 
